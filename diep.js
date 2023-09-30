@@ -369,7 +369,7 @@ class DeadMsg {
 
             text("Level:", this.x - 42, this.y + 60, 24)
 
-            text(this.lvl, this.x + 10, this.y + 60, 36, true)
+            text(this.lvl+1, this.x + 10, this.y + 60, 36, true)
         }
     }
 }
@@ -614,9 +614,5 @@ function mainloop() {
 }
 
 mainloop();
-
-
-
-
 
 
