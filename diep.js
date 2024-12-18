@@ -11,16 +11,16 @@ let mouseX = Infinity;
 let mouseY = 0;
 let keys = {};
 let mouseDown = false;
-let shapeCount = 30 / 1000;//20
+let shapeCount = Number(prompt("Enter the number of shapes")) / 1000;//20
 const xpBoost = 10;
-const roomSize = 5000;//5000
+let roomSize = Number(prompt("Enter the room size"))//5000
 const roomBorder = 100;//100
 
 let polygons = [];
 let bullets = [];
 
 class Polygon {
-    constructor(x, y) {
+    constructor(x, y, sides) {
         this.x = x;
         this.y = y;
         this.direction = Math.random() * Math.PI * 2;
@@ -33,9 +33,21 @@ class Polygon {
             (Math.random() < 0.75 ? 3 :
                 (Math.random() < 0.97 ? 5 :
                     50));
+        if (Math.random() < 0.03) {
+            this.sides = 14;
+        }
+        if (Math.random() < 0.1) {
+            this.sides = 1000;
+        }
+        // if (Math.random() < 0.1) {
+        //     this.sides = 2;
+        // }
         this.ω = Math.random() > 0.5 ? (800 + Math.random() * 400) : -(800 + Math.random() * 400);
         this.damaged = false;
         this.alpha = 1;
+        if (sides) {
+            this.sides = sides;
+        }
         switch (this.sides) {
             case 4:
                 this.health = 10;
@@ -54,6 +66,17 @@ class Polygon {
                 this.size = 54 / 1.25;
                 this.xp = 100;
                 break;
+            case 2:
+                this.health = 20;
+                this.size = 100 / 1.25;
+                this.xp = 80;
+                break;
+
+            case 14:
+                this.health = 25000;
+                this.size = 500 / 1.25;
+                this.xp = 4000;
+                break;
 
             case 50:
                 this.health = 3000;
@@ -61,6 +84,12 @@ class Polygon {
                 this.xp = 3000;
                 this.to5 = true;
                 break;
+            case 1000:
+                this.health = 10;
+                this.size = 30 / 1.25;
+                this.xp = 10;
+                break;
+
         }
         this.xp *= xpBoost;
         this.damage = 2;
@@ -106,6 +135,11 @@ class Polygon {
                 basic.xp += this.xp;
                 this.isKilled = true;
             }
+            if (Math.random() < 0.2 && this.sides !== 2) {
+                for (let i = 0; i < Math.min(this.sides, 100); i++) {
+                    polygons.push(new Polygon(this.x, this.y, 2));
+                }
+            }
         }
     }
     draw() {
@@ -122,6 +156,15 @@ class Polygon {
                 break;
             case 50:
                 ctx.fillStyle = `rgba(118, 141, 252, ${this.alpha}`;
+                break;
+            case 14:
+                ctx.fillStyle = `rgba(0, 255, 0, ${this.alpha}`;
+                break;
+            case 1000:
+                ctx.fillStyle = `rgba(255, 255, 255, ${this.alpha}`;
+                break;
+            case 2:
+                ctx.fillStyle = `rgba(Number(Math.random() * 255), Number(Math.random() * 255), Number(Math.random() * 255), ${this.alpha})`;
                 break;
         }
         ctx.moveTo(this.x2 + Math.cos(this.deg) * this.size * 1.25, this.y2 + Math.sin(this.deg) * this.size * 1.25);
@@ -239,6 +282,15 @@ class Basic {
 
                         case 50:
                             this.enemy = "Alpha Pentagon";
+                            break;
+                        case 2:
+                            this.enemy = "Line";
+                            break;
+                        case 1000:
+                            this.enemy = "Circle";
+                            break;
+                        case 14:
+                            this.enemy = "Tetradecagon";
                             break;
                     }
                     this.isKilled = true;
